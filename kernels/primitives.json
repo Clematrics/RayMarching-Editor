@@ -1,0 +1,23 @@
+[
+	{
+		"name" : "Sphere",
+		"inputs" : [
+			{
+				"name" : "position",
+				"type" : "vec3"
+			},
+			{
+				"name" : "radius",
+				"type" : "float"
+			}
+		],
+		"outputs" : [
+			{
+				"name" : "",
+				"type" : "float",
+				"code" : "",
+				"value" : "length(#position) - #radius"
+			}
+		]
+	}
+]

@@ -1,0 +1,140 @@
+[
+	{
+		"name" : "Add floats",
+		"inputs" : [
+			{
+				"name" : "#first",
+				"type" : "float"
+			},
+			{
+				"name" : "#second",
+				"type" : "float"
+			}
+		],
+		"outputs" : [
+			{
+				"name" : "",
+				"type" : "float",
+				"code" : "",
+				"value" : "#first + #second"
+			}
+		]
+	},
+	{
+		"name" : "Subtract floats",
+		"inputs" : [
+			{
+				"name" : "#first",
+				"type" : "float"
+			},
+			{
+				"name" : "#second",
+				"type" : "float"
+			}
+		],
+		"outputs" : [
+			{
+				"name" : "",
+				"type" : "float",
+				"code" : "",
+				"value" : "#first - #second"
+			}
+		]
+	},
+	{
+		"name" : "Multiply floats",
+		"inputs" : [
+			{
+				"name" : "#first",
+				"type" : "float"
+			},
+			{
+				"name" : "#second",
+				"type" : "float"
+			}
+		],
+		"outputs" : [
+			{
+				"name" : "",
+				"type" : "float",
+				"code" : "",
+				"value" : "#first * #second"
+			}
+		]
+	},
+	{
+		"name" : "Divide floats",
+		"inputs" : [
+			{
+				"name" : "#first",
+				"type" : "float"
+			},
+			{
+				"name" : "#second",
+				"type" : "float"
+			}
+		],
+		"outputs" : [
+			{
+				"name" : "",
+				"type" : "float",
+				"code" : "",
+				"value" : "#first / #second"
+			}
+		]
+	},
+	{
+		"name" : "Break float3",
+		"inputs" : [
+			{
+				"name" : "#vector",
+				"type" : "float3"
+			}
+		],
+		"outputs" : [
+			{
+				"name" : "x",
+				"type" : "float",
+				"code" : "",
+				"value" : "#vector.x"
+			},
+			{
+				"name" : "y",
+				"type" : "float",
+				"code" : "",
+				"value" : "#vector.y"
+			},
+			{
+				"name" : "z",
+				"type" : "float",
+				"code" : "",
+				"value" : "#vector.z"
+			}
+		]
+	},
+	{
+		"name" : "Make float3",
+		"inputs" : [
+			{
+				"name" : "x",
+				"type" : "float"
+			},
+			{
+				"name" : "y",
+				"type" : "float"
+			},
+			{
+				"name" : "z",
+				"type" : "float"
+			}
+		],
+		"outputs" : [
+			{
+				"name" : "",
+				"type" : "float3",
+				"code" : "",
+				"value" : "(vec3)(#x, #y, #z)"
+			}
+		]
+	}
+]
