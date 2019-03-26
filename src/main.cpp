@@ -6,28 +6,40 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
+#include "application_log.hpp"
+#include "configuration_loader.hpp"
+
 int main() {
-    bool running = true;
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "RayMarching Editor");
-    ImGui::SFML::Init(window);
+	bool running = true;
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "RayMarching Editor");
+	ImGui::SFML::Init(window);
 
-    sf::Clock delta;
-    while (running) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            ImGui::SFML::ProcessEvent(event);
-            running = event.type != event.Closed;
-        }
+	try {
+		loadTemplates("kernels");
+	}
+	catch (std::exception& e) {
+		debug(e.what());
+	}
 
-        window.clear();
-        ImGui::SFML::Update(window, delta.restart());
-        ImGui::ShowDemoWindow();
-        ImGui::SFML::Render(window);
-        window.display();
-    }
+	sf::Clock delta;
+	while (running) {
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			ImGui::SFML::ProcessEvent(event);
+			running = event.type != event.Closed;
+		}
 
-    ImGui::SFML::Shutdown();
-    window.close();
+		window.clear();
+		ImGui::SFML::Update(window, delta.restart());
+		ImGui::ShowDemoWindow();
+		showDebugConsole();
 
-    return 0;
+		ImGui::SFML::Render(window);
+		window.display();
+	}
+
+	ImGui::SFML::Shutdown();
+	window.close();
+
+	return 0;
 }
