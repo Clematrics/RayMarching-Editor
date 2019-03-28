@@ -68,6 +68,6 @@ NodeLibrary loadTemplates(const std::string path) {
 		logError(e.what());
 	}
 
-	logDebug(loadedNodes.size() + " node templates were loaded");
+	logDebug(std::to_string(loadedNodes.size()) + " node templates were loaded");
 	return loadedNodes;
 }

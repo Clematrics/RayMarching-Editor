@@ -24,7 +24,7 @@ set lib_sfml= /LIBPATH lib/sfml-graphics.lib /LIBPATH lib/sfml-system.lib /LIBPA
 set libraries= %lib_opengl% %lib_sfml%
 
 rem defines
-set %defines%= /DDEBUG
+set %defines%= /DENABLE_LOG
 
 set compilerflags=/Od /Zi /EHsc /std:c++latest %defines%
 set sources= src/*.cpp %enum_to_string_sources% %imgui_sources% %node_editor_sources%

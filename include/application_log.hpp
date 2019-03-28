@@ -3,13 +3,24 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #define ENABLE_LOG
 
-static std::stringstream debugStream;
+enum class logType {
+	DEBUG, WARNING, ERROR, FATAL
+};
 
-inline void logDebug(const std::string& msg);
-inline void logError(const std::string& msg);
-inline void logFatal(const std::string& msg);
+struct logEntry {
+	logType type;
+	std::string message;
+};
+
+static std::vector<logEntry> logEntries;
+
+void logDebug(const std::string& msg);
+void logWarning(const std::string& msg);
+void logError(const std::string& msg);
+void logFatal(const std::string& msg);
 
 void showDebugConsole();

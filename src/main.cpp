@@ -18,7 +18,7 @@ int main() {
 		loadTemplates("kernels");
 	}
 	catch (std::exception& e) {
-		debug(e.what());
+		logError(e.what());
 	}
 
 	sf::Clock delta;
