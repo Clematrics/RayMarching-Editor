@@ -33,9 +33,8 @@ int main() {
 
 	try {
 
-	Node node = {0, "Sphere", {}, {}};
-	addNode(node);
-	initializeEditor();
+	Editor editor;
+	editor.getGraph().nodes.push_back(Node("Sphere"));
 
 	sf::Clock delta;
 	while (running) {
@@ -59,13 +58,12 @@ int main() {
 		ImGui::SFML::Update(window, delta.restart());
 		ImGui::ShowDemoWindow();
 		showDebugConsole();
-		showEditor();
+		editor.display();
 		ImGui::SFML::Render(window);
 
 		window.display();
 	}
 
-	destroyEditor();
 	ImGui::SFML::Shutdown();
 	window.close();
 
