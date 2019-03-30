@@ -1,4 +1,4 @@
-#include "configuration_loader.hpp"
+#include "templates_loader.hpp"
 
 #include <filesystem>
 #include <fstream>

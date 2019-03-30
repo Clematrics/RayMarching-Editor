@@ -7,7 +7,8 @@
 #include "imgui-SFML.h"
 
 #include "application_log.hpp"
-#include "configuration_loader.hpp"
+#include "templates_loader.hpp"
+#include "graph_editor.hpp"
 
 std::string fragShader {
 	"#version 330\n"
@@ -24,11 +25,17 @@ int main() {
 	ImGui::SFML::Init(window);
 
 	try {
-		loadTemplates("kernels");
+		setTemplates(loadTemplates("kernels"));
 	}
 	catch (std::exception& e) {
 		logError(e.what());
 	}
+
+	try {
+
+	Node node = {0, "Sphere", {}, {}};
+	addNode(node);
+	initializeEditor();
 
 	sf::Clock delta;
 	while (running) {
@@ -41,24 +48,30 @@ int main() {
 		window.clear();
 
 		sf::Texture texture;
-		texture.create(window.getSize().x, window.getSize().y);
+		auto [ width, height ] = window.getView().getSize();
+		texture.create(width, height);
 		sf::Sprite sprite(texture);
 		sf::Shader shader;
 		shader.loadFromMemory(fragShader, sf::Shader::Fragment);
-		shader.setUniform("iResolution", sf::Glsl::Vec2(window.getSize().x, window.getSize().y));
-
+		shader.setUniform("iResolution", sf::Glsl::Vec2(width, height));
 		window.draw(sprite, &shader);
 
 		ImGui::SFML::Update(window, delta.restart());
 		ImGui::ShowDemoWindow();
 		showDebugConsole();
+		showEditor();
 		ImGui::SFML::Render(window);
 
 		window.display();
 	}
 
+	destroyEditor();
 	ImGui::SFML::Shutdown();
 	window.close();
 
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << '\n';
+	}
 	return 0;
 }

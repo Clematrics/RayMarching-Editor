@@ -4,17 +4,17 @@
 		"inputs" : [
 			{
 				"name" : "position",
-				"type" : "vec3"
+				"type" : "Vec3"
 			},
 			{
 				"name" : "radius",
-				"type" : "float"
+				"type" : "Float"
 			}
 		],
 		"outputs" : [
 			{
 				"name" : "",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "length(#position) - #radius"
 			}

@@ -4,17 +4,17 @@
 		"inputs" : [
 			{
 				"name" : "#first",
-				"type" : "float"
+				"type" : "Float"
 			},
 			{
 				"name" : "#second",
-				"type" : "float"
+				"type" : "Float"
 			}
 		],
 		"outputs" : [
 			{
 				"name" : "",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "#first + #second"
 			}
@@ -25,17 +25,17 @@
 		"inputs" : [
 			{
 				"name" : "#first",
-				"type" : "float"
+				"type" : "Float"
 			},
 			{
 				"name" : "#second",
-				"type" : "float"
+				"type" : "Float"
 			}
 		],
 		"outputs" : [
 			{
 				"name" : "",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "#first - #second"
 			}
@@ -46,7 +46,7 @@
 		"inputs" : [
 			{
 				"name" : "#first",
-				"type" : "float"
+				"type" : "Float"
 			},
 			{
 				"name" : "#second",
@@ -56,7 +56,7 @@
 		"outputs" : [
 			{
 				"name" : "",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "#first * #second"
 			}
@@ -67,17 +67,17 @@
 		"inputs" : [
 			{
 				"name" : "#first",
-				"type" : "float"
+				"type" : "Float"
 			},
 			{
 				"name" : "#second",
-				"type" : "float"
+				"type" : "Float"
 			}
 		],
 		"outputs" : [
 			{
 				"name" : "",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "#first / #second"
 			}
@@ -88,25 +88,25 @@
 		"inputs" : [
 			{
 				"name" : "#vector",
-				"type" : "float3"
+				"type" : "Vec3"
 			}
 		],
 		"outputs" : [
 			{
 				"name" : "x",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "#vector.x"
 			},
 			{
 				"name" : "y",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "#vector.y"
 			},
 			{
 				"name" : "z",
-				"type" : "float",
+				"type" : "Float",
 				"code" : "",
 				"value" : "#vector.z"
 			}
@@ -117,21 +117,21 @@
 		"inputs" : [
 			{
 				"name" : "x",
-				"type" : "float"
+				"type" : "Float"
 			},
 			{
 				"name" : "y",
-				"type" : "float"
+				"type" : "Float"
 			},
 			{
 				"name" : "z",
-				"type" : "float"
+				"type" : "Float"
 			}
 		],
 		"outputs" : [
 			{
 				"name" : "",
-				"type" : "float3",
+				"type" : "Vec3",
 				"code" : "",
 				"value" : "(vec3)(#x, #y, #z)"
 			}

@@ -26,3 +26,7 @@ public:
 };
 
 using NodeLibrary = std::map<std::string, NodeTemplate>;
+
+static NodeLibrary templates;
+NodeLibrary getTemplates();
+void setTemplates(NodeLibrary lib);
