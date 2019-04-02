@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 
 static uint64_t global_id_counter = 0;

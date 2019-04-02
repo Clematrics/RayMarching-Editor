@@ -25,16 +25,18 @@ int main() {
 	ImGui::SFML::Init(window);
 
 	try {
-		setTemplates(loadTemplates("kernels"));
+		loadTemplates("kernels");
 	}
 	catch (std::exception& e) {
 		logError(e.what());
+		std::cout << e.what() << '\n';
 	}
 
 	try {
 
 	Editor editor;
-	editor.getGraph().nodes.push_back(Node("Sphere"));
+	// editor.getGraph().nodes.push_back(Node("Sphere"));
+	editor.addNode("Sphere");
 
 	sf::Clock delta;
 	while (running) {
@@ -69,6 +71,7 @@ int main() {
 
 	}
 	catch (std::exception& e) {
+		logError(e.what());
 		std::cout << e.what() << '\n';
 	}
 	return 0;

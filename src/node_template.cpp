@@ -1,9 +1,11 @@
 #include "node_template.hpp"
 
-NodeLibrary getTemplates() {
+static NodeLibrary templates;
+
+NodeLibrary& getTemplates() {
 	return templates;
 }
 
-void setTemplates(NodeLibrary lib) {
+void setTemplates(NodeLibrary& lib) {
 	templates = lib;
 }

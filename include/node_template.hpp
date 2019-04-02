@@ -5,16 +5,19 @@
 
 #include "types.hpp"
 
-class InputTemplate {
+class PinTemplate {
 public:
 	std::string name;
 	PinType type;
+	bool isImmediate;
 };
 
-class OutputTemplate {
+class InputTemplate : public PinTemplate {
 public:
-	std::string name;
-	PinType type;
+};
+
+class OutputTemplate : public PinTemplate {
+public:
 	std::string code;
 	std::string returnValue;
 };
@@ -27,6 +30,5 @@ public:
 
 using NodeLibrary = std::map<std::string, NodeTemplate>;
 
-static NodeLibrary templates;
-NodeLibrary getTemplates();
-void setTemplates(NodeLibrary lib);
+NodeLibrary& getTemplates();
+void setTemplates(NodeLibrary& lib);

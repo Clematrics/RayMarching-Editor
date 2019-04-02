@@ -1,9 +1,16 @@
 #include "graph_editor.hpp"
 
+#include <any>
+#include <array>
 #include <string>
+
+#include "application_log.hpp"
+#include "structs.hpp"
 
 #include "node_template.hpp"
 #include "ax/Widgets.h"
+
+#include "util/zip.hpp"
 
 namespace NodeEd = ax::NodeEditor;
 
@@ -36,12 +43,16 @@ Graph& Editor::getGraph() {
 	return graph;
 }
 
+void Editor::addNode(std::string name) {
+	graph.nodes.emplace_back(name);
+}
+
 void Editor::displayNodes() {
 	NodeEd::PushStyleVar(NodeEd::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
 
 	for (auto& node : graph.nodes) {
 		NodeEd::BeginNode((uint64_t)node.id);
-		ImGui::PushID(node.id);
+		ImGui::PushID((uint64_t)node.id);
 
 		ImGui::BeginVertical("node");
 		displayHeader(node);
@@ -58,7 +69,7 @@ void Editor::displayNodes() {
 		NodeEd::EndNode();
 
 		auto drawList = NodeEd::GetNodeBackgroundDrawList((uint64_t)node.id);
-		// constantes de padding du header (voir builders.cpp, l.62)
+		// padding constants for the header (see builders.cpp, line 62)
 		const auto halfBorderWidth = NodeEd::GetStyle().NodeBorderWidth * 0.5f;
 		auto a = ImVec2(currentHeaderTopLeft.x - (8 - halfBorderWidth), currentHeaderTopLeft.y - (4 - halfBorderWidth));
 		auto b = ImVec2(currentHeaderBottomRight.x + (8 - halfBorderWidth), currentHeaderBottomRight.y);
@@ -70,7 +81,7 @@ void Editor::displayNodes() {
 	NodeEd::PopStyleVar();
 }
 
-void Editor::displayHeader(Node node) {
+void Editor::displayHeader(Node& node) {
 	ImGui::BeginHorizontal("header");
 
 	ImGui::Spring();
@@ -86,23 +97,13 @@ void Editor::displayHeader(Node node) {
 	ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
 }
 
-void Editor::displayInputs(Node node) {
-	static int id = 0;
+void Editor::displayInputs(Node& node) {
 	NodeEd::PushStyleVar(NodeEd::StyleVar_PivotAlignment, ImVec2(0, 0.5f));
 	NodeEd::PushStyleVar(NodeEd::StyleVar_PivotSize, ImVec2(0, 0));
 
 	ImGui::BeginVertical("inputs", ImVec2(0, 0), 0.0f);
-	for (auto& input : node.asTemplate().inputs) {
-
-		NodeEd::BeginPin(id++, NodeEd::PinKind::Input);
-		ImGui::BeginHorizontal(id++);
-		displayPin(input.type, false);
-		ImGui::Spring(0);
-		ImGui::TextUnformatted(input.name.c_str());
-		ImGui::Spring(0);
-		ImGui::EndHorizontal();
-		NodeEd::EndPin();
-
+	for (auto& [ input, pin ] : zip(node.asTemplate().inputs, node.inputs)) {
+		displayPin(input, pin);
 		ImGui::Spring(1, 0);
 	}
 	ImGui::EndVertical();
@@ -110,36 +111,99 @@ void Editor::displayInputs(Node node) {
 	NodeEd::PopStyleVar(2);
 }
 
-void Editor::displayOutputs(Node node) {
-	static int id = 0;
+void Editor::displayOutputs(Node& node) {
 	NodeEd::PushStyleVar(NodeEd::StyleVar_PivotAlignment, ImVec2(1.0f, 0.5f));
 	NodeEd::PushStyleVar(NodeEd::StyleVar_PivotSize, ImVec2(0, 0));
 
 	ImGui::Spring(1);
 	ImGui::BeginVertical("outputs", ImVec2(0, 0), 1.0f);
-	for (auto& output : node.asTemplate().outputs) {
-
-		NodeEd::BeginPin(id++, NodeEd::PinKind::Output);
-		ImGui::BeginHorizontal(id++);
-
-		// ImGui::Spring(0);
-		ImGui::TextUnformatted(output.name.c_str());
-		ImGui::Spring(0);
-		displayPin(output.type, false);
-
-		ImGui::EndHorizontal();
-		NodeEd::EndPin();
-
-
+	for (auto& [ output, pin ] : zip(node.asTemplate().outputs, node.outputs)) {
+		displayPin(output, pin);
 		ImGui::Spring(1, 0);
 	}
-	// ImGui::Spring(1, 0);
 	ImGui::EndVertical();
 
 	NodeEd::PopStyleVar(2);
 }
 
-void Editor::displayPin(PinType type, bool connected) {
+
+void Editor::displayPin(InputTemplate& input, Pin& pin) {
+	NodeEd::BeginPin((uint64_t)pin.id, NodeEd::PinKind::Input);
+
+	ImGui::BeginHorizontal((uint64_t)pin.id);
+	ImGui::Spring(0, 0);
+
+	displayPinSocket(input.type, pin.isConnected());
+	ImGui::Spring(0);
+	displayPinContent(input, pin);
+
+	ImGui::BeginVertical("pin name");
+	ImGui::Spring(1);
+	ImGui::TextUnformatted(input.name.c_str());
+	ImGui::Spring(1);
+	ImGui::EndVertical();
+
+	ImGui::Spring(0);
+	ImGui::EndHorizontal();
+
+	NodeEd::EndPin();
+}
+
+void Editor::displayPin(OutputTemplate& output, Pin& pin) {
+	NodeEd::BeginPin((uint64_t)pin.id, NodeEd::PinKind::Output);
+
+	ImGui::BeginHorizontal((uint64_t)pin.id);
+	ImGui::Spring(0);
+
+	ImGui::BeginVertical("pin name");
+	ImGui::Spring(1);
+	ImGui::TextUnformatted(output.name.c_str());
+	ImGui::Spring(1);
+	ImGui::EndVertical();
+
+	displayPinContent(output, pin);
+	ImGui::Spring(0);
+	displayPinSocket(output.type, pin.isConnected());
+
+	ImGui::Spring(0);
+	ImGui::EndHorizontal();
+
+	NodeEd::EndPin();
+}
+
+void Editor::displayPinContent(PinTemplate& pinTemplate, Pin& pin) {
+	if (!pinTemplate.isImmediate)
+		return;
+
+	ImGui::BeginVertical("pin immediate");
+	ImGui::Spring(0);
+
+	ImGui::PushItemWidth(100.f);
+	switch(pinTemplate.type) {
+		case PinType::Float: {
+			Float& a = std::any_cast<Float&>(pin.immediate);
+			ImGui::InputScalar("##float", ImGuiDataType_Float, &(a.v), nullptr, nullptr, "%.3f");
+			break;
+		}
+		case PinType::Vec3: {
+			Vec3& arr = std::any_cast<Vec3&>(pin.immediate);
+			ImGui::InputScalar("##vec3_0", ImGuiDataType_Float, &(arr.x), nullptr, nullptr, "%.3f");
+			ImGui::Spring(1, 0);
+			ImGui::InputScalar("##vec3_1", ImGuiDataType_Float, &(arr.y), nullptr, nullptr, "%.3f");
+			ImGui::Spring(1, 0);
+			ImGui::InputScalar("##vec3_2", ImGuiDataType_Float, &(arr.z), nullptr, nullptr, "%.3f");
+			break;
+		}
+		default:
+			;
+	}
+	ImGui::PopItemWidth();
+
+	ImGui::Spring(0);
+	ImGui::EndVertical();
+}
+
+void Editor::displayPinSocket(PinType type, bool connected) {
 	ax::Widgets::IconType icon;
 	ImColor color;
 	switch(type) {

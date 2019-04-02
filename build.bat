@@ -14,9 +14,10 @@ set node_editor_include= /I dependencies/NodeEditor/Include /I dependencies/Node
 set node_editor_sources= dependencies/NodeEditor/Source/*.cpp dependencies/NodeEditor/Source/ax/*.cpp
 set picojson_include= /I dependencies/picojson
 set sfml_include= /I dependencies
+set util_include= /I dependencies/util
 
 rem includes
-set includes= /I include %enum_to_string_include% %imgui_include% %node_editor_include% %picojson_include% %sfml_include% 
+set includes= /I include %enum_to_string_include% %imgui_include% %node_editor_include% %picojson_include% %sfml_include% %zip_include%
 
 rem libraries
 set lib_opengl= /LIBPATH lib/OpenGL32.lib

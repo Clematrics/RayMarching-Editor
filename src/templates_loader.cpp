@@ -2,35 +2,36 @@
 
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 #include "application_log.hpp"
+#include "node_template.hpp"
 #include "types.hpp"
 
-std::vector<InputTemplate> loadInputTemplate(const picojson::value jsonInputs) {
-	std::vector<InputTemplate> inputs;
-	for (const auto& object : jsonInputs.get<picojson::array>()) {
-		InputTemplate input;
-		input.name = 					object.get("name").get<std::string>();
-		input.type = stringToPinType(	object.get("type").get<std::string>() );
-		inputs.emplace_back(input);
-	}
-	return inputs;
+template <class PinTemplate>
+PinTemplate loadPinTemplate(const picojson::value& object) {
+	PinTemplate pin;
+	pin.name = 					object.get("name").get<std::string>();
+	pin.type = stringToPinType(	object.get("type").get<std::string>() );
+
+	auto immediateObject = object.get("immediate");
+	pin.isImmediate = 			immediateObject.is<picojson::null>() ? false : true;
+	return pin;
 }
 
-std::vector<OutputTemplate> loadOutputTemplate(const picojson::value jsonOutputs) {
-	std::vector<OutputTemplate> outputs;
-	for (const auto& object : jsonOutputs.get<picojson::array>()) {
-		OutputTemplate output;
-		output.name = 					object.get("name").get<std::string>();
-		output.type = stringToPinType(	object.get("type").get<std::string>() );
-		output.code = 					object.get("code").get<std::string>();
-		output.returnValue = 			object.get("value").get<std::string>();
-		outputs.emplace_back(output);
-	}
-	return outputs;
+InputTemplate loadInputTemplate(const picojson::value& object) {
+	InputTemplate input = loadPinTemplate<InputTemplate>(object);
+	return input;
 }
 
-NodeLibrary loadTemplateFile(const std::string filePath) {
+OutputTemplate loadOutputTemplate(const picojson::value& object) {
+	OutputTemplate output = loadPinTemplate<OutputTemplate>(object);
+	output.code = 				object.get("code").get<std::string>();
+	output.returnValue = 		object.get("value").get<std::string>();
+	return output;
+}
+
+NodeLibrary loadTemplateFile(const std::string& filePath) {
 	std::ifstream stream(filePath);
 	if (!stream.is_open()) {
 		logError("Cannot open the file " + filePath + " to load node templates");
@@ -44,8 +45,10 @@ NodeLibrary loadTemplateFile(const std::string filePath) {
 
 	for (const auto& object : value.get<picojson::array>()) {
 		NodeTemplate nodeTemplate;
-		nodeTemplate.inputs = loadInputTemplate(object.get("inputs"));
-		nodeTemplate.outputs = loadOutputTemplate(object.get("outputs"));
+		for (auto& input : object.get("inputs").get<picojson::array>())
+			nodeTemplate.inputs.emplace_back(loadInputTemplate(input));
+		for (auto& output : object.get("outputs").get<picojson::array>())
+			nodeTemplate.outputs.emplace_back(loadOutputTemplate(output));
 
 		library.emplace(object.get("name").get<std::string>(), nodeTemplate);
 	}
@@ -53,7 +56,7 @@ NodeLibrary loadTemplateFile(const std::string filePath) {
 	return library;
 }
 
-NodeLibrary loadTemplates(const std::string path) {
+NodeLibrary loadTemplates(const std::string& path) {
 	NodeLibrary loadedNodes;
 	logDebug("Loading node templates...");
 
@@ -69,5 +72,6 @@ NodeLibrary loadTemplates(const std::string path) {
 	}
 
 	logDebug(std::to_string(loadedNodes.size()) + " node templates were loaded");
+	setTemplates(loadedNodes);
 	return loadedNodes;
 }
